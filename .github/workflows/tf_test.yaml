@@ -1,0 +1,30 @@
+---
+name: Run tests
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  TF_VERSION: "v1.8.0-alpha20240228"
+
+jobs:
+  tf-tests:
+    strategy:
+      matrix:
+        folder: ["./04-11-2024-terraform-test"]
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{env.TF_VERSION}}
+      - name: terraform init
+        working-directory: ${{ matrix.folder }}
+        run: |
+          terraform init
+          terraform test
